@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Клиентское приложение</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #plot {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+        }
+        #result {
+            margin-top: 20px;
+        }
+        #controls {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+<h1>Клиентское приложение</h1>
+<form id="calculation-form">
+    <label for="function">Функция:</label>
+    <input type="text" id="function" name="function" placeholder="Например: 2*sin(x) + cos(x)" required><br>
+
+    <label for="x_start">Начало диапазона:</label>
+    <input type="text" id="x_start" name="x_start" placeholder="Например: -2*pi" required><br>
+
+    <label for="x_end">Конец диапазона:</label>
+    <input type="text" id="x_end" name="x_end" placeholder="Например: 2*pi" required><br>
+
+    <label for="step">Шаг вычислений:</label>
+    <input type="text" id="step" name="step" placeholder="Например: pi/4" required><br>
+
+    <button type="submit">Построить график</button>
+</form>
+
+<div id="plot"></div>
+
+<div id="controls">
+    <button id="toggle-pause" style="display: none;">Пауза</button>
+    <button id="reset">Сброс</button>
+</div>
+
+<div id="result">
+    <h2>Результат:</h2>
+    <pre id="response-data"></pre>
+</div>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    const form = document.getElementById('calculation-form');
+    const resultDiv = document.getElementById('response-data');
+    const plotDiv = document.getElementById('plot');
+    const togglePauseButton = document.getElementById('toggle-pause');
+    const resetButton = document.getElementById('reset');
+
+    let interval = null;
+    let isPaused = false;
+    let xValues = [];
+    let yValues = [];
+    let currentIndex = 0;
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        resultDiv.textContent = '';  // Очистка предыдущих ошибок и данных
+        togglePauseButton.style.display = 'inline-block';
+
+        // Считываем значения формы
+        const formData = new FormData(form);
+        let func = formData.get('function');
+        let xStart = formData.get('x_start');
+        let xEnd = formData.get('x_end');
+        let step = formData.get('step');
+
+        const replaceConstants = (input) => {
+            return input.replace(/\bpi\b/g, Math.PI).replace(/\be\b/g, Math.E);
+        };
+
+        try {
+            xStart = eval(replaceConstants(xStart));
+            xEnd = eval(replaceConstants(xEnd));
+            step = eval(replaceConstants(step));
+
+            func = func.replace(/\b(sin|cos|tan|log|exp|sqrt)\b/g, 'Math.$1');
+
+            if (xStart >= xEnd || step <= 0) {
+                resultDiv.textContent = "Ошибка: Проверьте диапазон или шаг.";
+                return;
+            }
+
+            xValues = [];
+            yValues = [];
+            for (let x = xStart; x <= xEnd; x += step) {
+                const y = eval(func.replace(/x/g, `(${x})`));
+                xValues.push(x);
+                yValues.push(y);
+            }
+
+            const trace = {
+                x: [],
+                y: [],
+                mode: 'lines+markers',
+                name: 'График функции',
+                marker: { color: 'blue' }
+            };
+
+            const layout = {
+                title: 'График функции',
+                xaxis: { title: 'X' },
+                yaxis: { title: 'Y' },
+                hovermode: 'closest'
+            };
+
+            Plotly.newPlot(plotDiv, [trace], layout);
+
+            currentIndex = 0;
+            isPaused = false;
+            drawNextPoint();
+
+        } catch (error) {
+            resultDiv.textContent = `Ошибка: ${error.message}`;
+        }
+    });
+
+    togglePauseButton.addEventListener('click', () => {
+        isPaused = !isPaused;
+        togglePauseButton.textContent = isPaused ? 'Продолжить' : 'Пауза';
+    });
+
+    resetButton.addEventListener('click', () => {
+        clearInterval(interval);
+        xValues = [];
+        yValues = [];
+        currentIndex = 0;
+        resultDiv.textContent = '';
+        plotDiv.innerHTML = '';
+        togglePauseButton.style.display = 'none';
+    });
+
+    function drawNextPoint() {
+        if (currentIndex < xValues.length && !isPaused) {
+            const trace = Plotly.restyle(plotDiv, 'x', [xValues.slice(0, currentIndex + 1)]);
+            Plotly.restyle(plotDiv, 'y', [yValues.slice(0, currentIndex + 1)]);
+            currentIndex++;
+            interval = setTimeout(drawNextPoint, 50);
+        } else if (currentIndex >= xValues.length) {
+            clearInterval(interval);
+            resultDiv.textContent = `Успешно построено ${xValues.length} точек.`;
+            togglePauseButton.style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>
