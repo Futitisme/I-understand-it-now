@@ -168,7 +168,8 @@
         if (currentIndex < xValues.length && !isPaused) {
             const trace = Plotly.restyle(plotDiv, 'x', [xValues.slice(0, currentIndex + 1)]);
             Plotly.restyle(plotDiv, 'y', [yValues.slice(0, currentIndex + 1)]);
-            const timestamp = new Date().toLocaleTimeString(); // Временная метка
+            const now = new Date();
+            const timestamp = `${now.toLocaleTimeString()}.${String(now.getMilliseconds()).padStart(3, '0')}`; // Временная метка с миллисекундами
             dataLog.textContent += `Время: ${timestamp}, X: ${xValues[currentIndex]}, Y: ${yValues[currentIndex]}\n`;
             currentIndex++;
             interval = setTimeout(drawNextPoint, 50);
