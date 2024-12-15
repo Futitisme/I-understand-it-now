@@ -22,6 +22,13 @@
             display: flex;
             justify-content: space-between;
         }
+        #data-output {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -54,6 +61,11 @@
     <pre id="response-data"></pre>
 </div>
 
+<div id="data-output">
+    <h2>Полученные данные:</h2>
+    <pre id="data-log"></pre>
+</div>
+
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <script>
     const form = document.getElementById('calculation-form');
@@ -61,6 +73,7 @@
     const plotDiv = document.getElementById('plot');
     const togglePauseButton = document.getElementById('toggle-pause');
     const resetButton = document.getElementById('reset');
+    const dataLog = document.getElementById('data-log');
 
     let interval = null;
     let isPaused = false;
@@ -134,6 +147,10 @@
     togglePauseButton.addEventListener('click', () => {
         isPaused = !isPaused;
         togglePauseButton.textContent = isPaused ? 'Продолжить' : 'Пауза';
+
+        if (!isPaused) {
+            drawNextPoint(); // Запускаем построение графика снова
+        }
     });
 
     resetButton.addEventListener('click', () => {
@@ -143,6 +160,7 @@
         currentIndex = 0;
         resultDiv.textContent = '';
         plotDiv.innerHTML = '';
+        dataLog.textContent = ''; // Очистка данных
         togglePauseButton.style.display = 'none';
     });
 
@@ -150,6 +168,8 @@
         if (currentIndex < xValues.length && !isPaused) {
             const trace = Plotly.restyle(plotDiv, 'x', [xValues.slice(0, currentIndex + 1)]);
             Plotly.restyle(plotDiv, 'y', [yValues.slice(0, currentIndex + 1)]);
+            const timestamp = new Date().toLocaleTimeString(); // Временная метка
+            dataLog.textContent += `Время: ${timestamp}, X: ${xValues[currentIndex]}, Y: ${yValues[currentIndex]}\n`;
             currentIndex++;
             interval = setTimeout(drawNextPoint, 50);
         } else if (currentIndex >= xValues.length) {
