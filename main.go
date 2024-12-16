@@ -194,27 +194,4 @@ func getFunctionHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func main() {
-	/*var xStart, xEnd, step float64
-	name := "Suryaninova"
 
-	getFunctionParameters.Call(uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(name))), uintptr(unsafe.Pointer(&xStart)), uintptr(unsafe.Pointer(&xEnd)), uintptr(unsafe.Pointer(&step)))
-
-	fmt.Printf("Параметры функции %s : Xstart = %f, Xend = %f, Step = %f\n", name, xStart, xEnd, step)
-	result, _, _ := calculateFunction.Call(uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(name))), uintptr(5.0))
-	fmt.Printf("Результат: %f\n", math.Float64frombits(uint64(result)))*/
-
-	http.HandleFunc("/", indexHandler)
-
-	http.HandleFunc("/fetch", fetchHandler)
-
-	http.HandleFunc("/get_function", getFunctionHandler)
-
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-	port := ":8080"
-	log.Printf("Сервер запущен на http://localhost%s\n", port)
-	if err := http.ListenAndServe(port, nil); err != nil {
-		log.Fatalf("Ошибка запуска сервера: %v", err)
-	}
-}
