@@ -9,4 +9,5 @@ DLL для хранения библиотек \
 Contributors:\
 LeniaCPP\
 MissV\
-eGOr
+eGOr\
+Мы не сдадим, ставлю мак комбо)))
