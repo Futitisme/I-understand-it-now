@@ -7,8 +7,10 @@ import (
 	"html/template"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"path/filepath"
+	"syscall"
 )
 
 type DataPoint struct {
@@ -21,6 +23,18 @@ type DataPayload struct {
 	XStart   float64 `json:"x_start"`
 	XEnd     float64 `json:"x_end"`
 	Step     float64 `json:"step"`
+}
+
+var (
+	dll                   *syscall.LazyDLL
+	calculateFunction     *syscall.LazyProc
+	getFunctionParameters *syscall.LazyProc
+)
+
+func init() {
+	dll = syscall.NewLazyDLL("D:/I understand it now/functions.dll")
+	calculateFunction = dll.NewProc("calculateFunction")
+	getFunctionParameters = dll.NewProc("getFunctionParameters")
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -144,10 +158,62 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(resultJSON))
 }
 
+func getFunctionHandler(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	var response map[string]interface{}
+
+	// Здесь вы можете вызвать вашу DLL или использовать логику, чтобы вернуть параметры
+	if name == "Volosov" {
+		response = map[string]interface{}{
+			"function": "0.01 * x ** 2 + 50 * cos(x)",
+			"x_start":  -10 * math.Pi,
+			"x_end":    10 * math.Pi,
+			"step":     math.Pi / 4,
+		}
+	} else if name == "Vasiliev" {
+		response = map[string]interface{}{
+			"function": "(1 / x) * sin(x) * 50",
+			"x_start":  -10,
+			"x_end":    10,
+			"step":     0.1,
+		}
+	} else if name == "Suryaninova" {
+		response = map[string]interface{}{
+			"function": "x * sin(x) * sin(1000000 * x)",
+			"x_start":  -15,
+			"x_end":    15,
+			"step":     0.3,
+		}
+	} else {
+		// Обработайте другие фамилии
+		http.Error(w, "Функция не найдена", http.StatusNotFound)
+		return
+	}
+
+	// Логирование параметров для проверки
+	fmt.Printf("Параметры функции %s: %+v\n", name, response)
+
+	// Отправка ответа клиенту
+	json.NewEncoder(w).Encode(response)
+}
+
 func main() {
+	/*var xStart, xEnd, step float64
+	name := "Suryaninova"
+
+	getFunctionParameters.Call(uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(name))), uintptr(unsafe.Pointer(&xStart)), uintptr(unsafe.Pointer(&xEnd)), uintptr(unsafe.Pointer(&step)))
+
+	fmt.Printf("Параметры функции %s : Xstart = %f, Xend = %f, Step = %f\n", name, xStart, xEnd, step)
+	result, _, _ := calculateFunction.Call(uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(name))), uintptr(5.0))
+	fmt.Printf("Результат: %f\n", math.Float64frombits(uint64(result)))*/
+
 	http.HandleFunc("/", indexHandler)
 
 	http.HandleFunc("/fetch", fetchHandler)
+
+	http.HandleFunc("/get_function", getFunctionHandler)
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	port := ":8080"
 	log.Printf("Сервер запущен на http://localhost%s\n", port)
