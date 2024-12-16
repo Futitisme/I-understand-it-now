@@ -2,17 +2,24 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрируем элементы по горизонтали */
+    justify-content: flex-start;
     background-color: #f4f4f9;
     color: #333;
+    min-height: 100vh; /* Для того чтобы body занимал всю высоту экрана */
 }
 
 h1 {
     text-align: center;
     margin: 20px 0;
+    width: 100%;
 }
 
 form {
-    max-width: 600px;
+    max-width: 80%; /* Ширина формы ограничена 80% от ширины экрана */
+    width: 600px; /* Минимальная ширина формы 600px */
     margin: 0 auto;
     padding: 20px;
     background: #fff;
@@ -56,9 +63,23 @@ button:hover {
     background-color: #0056b3;
 }
 
+#controls {
+    display: flex;
+    justify-content: center; /* Центрируем кнопки */
+    gap: 10px; /* Отступ между кнопками */
+    margin-top: 20px;
+}
+
 #controls button {
+    flex: 0 1 auto;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
     background-color: #6c757d;
     color: white;
+    display: none;
 }
 
 #controls button:hover {
@@ -66,7 +87,8 @@ button:hover {
 }
 
 #result, #data-output {
-    max-width: 600px;
+    max-width: 80%; /* Одинаковая ширина для всех блоков */
+    width: 600px; /* Минимальная ширина блоков 600px */
     margin: 20px auto;
     padding: 20px;
     background: #fff;
@@ -79,4 +101,14 @@ pre {
     padding: 10px;
     border-radius: 4px;
     overflow-x: auto;
+}
+
+/* Контейнер для графика */
+#plot {
+    max-width: 80%; 
+    width: 600px; 
+    height: 500px; 
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    display: none;
 }

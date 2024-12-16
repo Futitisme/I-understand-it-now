@@ -42,12 +42,11 @@
     <button type="submit">Построить график</button>
 </form>
 
-
 <div id="plot"></div>
 
 <div id="controls">
     <button id="toggle-pause" style="display: none;">Пауза</button>
-    <button id="reset">Сброс</button>
+    <button id="reset" style="display: none;">Сброс</button>
 </div>
 
 <div id="result">
@@ -107,7 +106,13 @@
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         resultDiv.textContent = '';  // Очистка предыдущих ошибок и данных
+        
+        // Показываем кнопки после начала построения графика
         togglePauseButton.style.display = 'inline-block';
+        resetButton.style.display = 'inline-block';
+
+        // Показываем контейнер с графиком
+        plotDiv.style.display = 'block'; // Показываем график
 
         // Считываем значения формы
         const formData = new FormData(form);
@@ -170,6 +175,7 @@
         }
     });
 
+
     togglePauseButton.addEventListener('click', () => {
         isPaused = !isPaused;
         togglePauseButton.textContent = isPaused ? 'Продолжить' : 'Пауза';
@@ -179,20 +185,25 @@
         }
     });
 
+    
+
     resetButton.addEventListener('click', () => {
         clearInterval(interval);
         xValues = [];
         yValues = [];
         currentIndex = 0;
         resultDiv.textContent = '';
-        plotDiv.innerHTML = '';
+        plotDiv.innerHTML = ''; // Очистка данных графика
+        plotDiv.style.display = 'none'; // Скрыть контейнер графика
         dataLog.textContent = ''; // Очистка данных
         togglePauseButton.style.display = 'none';
+        resetButton.style.display = 'none'; // Скрыть кнопку сброса
     });
+
 
     function drawNextPoint() {
         if (currentIndex < xValues.length && !isPaused) {
-            const trace = Plotly.restyle(plotDiv, 'x', [xValues.slice(0, currentIndex + 1)]);
+            const trace = Plotly.restyle(plotDiv, 'x', [xValues.slice(0, currentIndex + 1)]); 
             Plotly.restyle(plotDiv, 'y', [yValues.slice(0, currentIndex + 1)]);
             const now = new Date();
             const timestamp = `${now.toLocaleTimeString()}.${String(now.getMilliseconds()).padStart(3, '0')}`; // Временная метка с миллисекундами
