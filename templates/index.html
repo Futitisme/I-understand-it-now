@@ -4,160 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Клиентское приложение</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        /* Основной контейнер формы */
-        form {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Группировка меток и полей ввода */
-        .form-group {
-            display: flex;
-            align-items: center; /* Центрирование по вертикали */
-            margin-bottom: 15px;
-        }
-
-        label {
-            flex: 0 0 150px; /* Фиксированная ширина меток */
-            font-weight: bold;
-            margin-right: 10px; /* Отступ между меткой и полем */
-            white-space: nowrap; /* Запрещает перенос текста метки */
-        }
-
-        input[type="text"] {
-            flex: 1; /* Поля ввода заполняют оставшееся пространство */
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box; /* Учитывает padding в ширине */
-        }
-
-        /* Стиль кнопок */
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            margin-right: 10px;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-
-        #controls {
-            display: flex;
-            justify-content: flex-start; /* Выравнивание кнопок слева */
-            max-width: 600px;
-            margin: 10px auto;
-            gap: 10px; /* Расстояние между кнопками */
-        }
-
-        #controls button {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        #controls button:hover {
-            background-color: #495057;
-        }
-
-        /* Блоки вывода */
-        #result, #data-output {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        pre {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 4px;
-            overflow-x: auto;
-        }
-
-        #function-select {
-            margin-top: 10px; /* Отступ сверху для дропбокса */
-        }
-
-        p {
-            margin-top: 5px; /* Отступ сверху для текста "или выберите из списка" */
-            font-style: italic; /* Изменение стиля текста */
-        }
-
-        #plot {
-            width: 100%;
-            max-width: 800px;
-            margin: 20px auto;
-            border: 1px solid #ccc;
-        }
-
-        #result {
-            margin-top: 20px;
-        }
-
-        #data-output {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 <h1>Клиентское приложение</h1>
 <form id="calculation-form">
-    <label for="function">Функция:</label>
-    <input type="text" id="function" name="function" placeholder="Например: 2*sin(x) + cos(x)" required><br>
+    <div class="form-group">
+        <label for="function">Функция:</label>
+        <input type="text" id="function" name="function" placeholder="Например: 2*sin(x) + cos(x)" required>
+    </div>
 
-    <label for="x_start">Начало диапазона:</label>
-    <input type="text" id="x_start" name="x_start" placeholder="Например: -2*pi" required><br>
+    <div class="form-group">
+        <label for="x_start">Начало диапазона:</label>
+        <input type="text" id="x_start" name="x_start" placeholder="Например: -2*pi" required>
+    </div>
 
-    <label for="x_end">Конец диапазона:</label>
-    <input type="text" id="x_end" name="x_end" placeholder="Например: 2*pi" required><br>
+    <div class="form-group">
+        <label for="x_end">Конец диапазона:</label>
+        <input type="text" id="x_end" name="x_end" placeholder="Например: 2*pi" required>
+    </div>
 
-    <label for="step">Шаг вычислений:</label>
-    <input type="text" id="step" name="step" placeholder="Например: pi/4" required><br>
+    <div class="form-group">
+        <label for="step">Шаг вычислений:</label>
+        <input type="text" id="step" name="step" placeholder="Например: pi/4" required>
+    </div>
 
-    <label for="function-select">Или выбрать из списка:</label>
-    <select id="function-select">
-        <option value="">Выберите фамилию</option>
-        <option value="Volosov">Volosov</option>
-        <option value="Vasiliev">Vasiliev</option>
-        <option value="Suryaninova">Suryaninova</option>
-    </select>
+    <div class="form-group">
+        <label for="function-select">Или выбрать из списка:</label>
+        <select id="function-select">
+            <option value="">Выберите фамилию</option>
+            <option value="Volosov">Volosov</option>
+            <option value="Vasiliev">Vasiliev</option>
+            <option value="Suryaninova">Suryaninova</option>
+        </select>
+    </div>
 
     <button type="submit">Построить график</button>
 </form>
+
 
 <div id="plot"></div>
 
