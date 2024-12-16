@@ -7,7 +7,6 @@ import (
 	"html/template"
 	"io/ioutil"
 	"log"
-	"math"
 	"net/http"
 	"path/filepath"
 	"syscall"
@@ -162,30 +161,28 @@ func getFunctionHandler(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	var response map[string]interface{}
 
-	// Здесь вы можете вызвать вашу DLL или использовать логику, чтобы вернуть параметры
 	if name == "Volosov" {
 		response = map[string]interface{}{
 			"function": "0.01 * x ** 2 + 50 * cos(x)",
-			"x_start":  -10 * math.Pi,
-			"x_end":    10 * math.Pi,
-			"step":     math.Pi / 4,
+			"x_start":  "(-10 * pi)",
+			"x_end":    "(10 * pi)",
+			"step":     "(pi / 4)",
 		}
 	} else if name == "Vasiliev" {
 		response = map[string]interface{}{
 			"function": "(1 / x) * sin(x) * 50",
-			"x_start":  -10,
-			"x_end":    10,
-			"step":     0.1,
+			"x_start":  "-10",
+			"x_end":    "10",
+			"step":     "0.1",
 		}
 	} else if name == "Suryaninova" {
 		response = map[string]interface{}{
 			"function": "x * sin(x) * sin(1000000 * x)",
-			"x_start":  -15,
-			"x_end":    15,
-			"step":     0.3,
+			"x_start":  "-15",
+			"x_end":    "15",
+			"step":     "0.3",
 		}
 	} else {
-		// Обработайте другие фамилии
 		http.Error(w, "Функция не найдена", http.StatusNotFound)
 		return
 	}
